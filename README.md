@@ -9,7 +9,13 @@ Selectize-plugin-a11y is a plugin to make Selectize.js accessible as a Combobox.
 <script>
 $(function() {
     $('select').selectize({
-	plugins: ['selectize-plugin-a11y']
+        plugins: ['selectize-plugin-a11y'],
+        render: {
+            option: function($item, escape) {
+                // Every option must have a unique id
+                return `<div class="option" role="option" id="${$item.text.replace(' ', '')}">${$item.text}</div>`
+            }
+        }
     });
 </script>
 ```
