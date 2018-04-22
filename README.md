@@ -20,3 +20,5 @@ $(function() {
 </script>
 ```
 
+## Pull requests are always welcome
+Any pull request to improve the plugin will be appreciated 😉
