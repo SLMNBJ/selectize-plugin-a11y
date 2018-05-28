@@ -1,5 +1,7 @@
 Selectize.define("selectize-plugin-a11y", function(options) {
   var self = this;
+  var KEY_RETURN = 13;
+
   if (typeof self.accessibility === "undefined") {
     self.accessibility = {};
   }
