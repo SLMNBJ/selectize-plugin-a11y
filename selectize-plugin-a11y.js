@@ -1,17 +1,20 @@
-Selectize.define("selectize-plugin-a11y", function(options) {
-  let self = this;
+/* global Selectize */
+Selectize.define("selectize-plugin-a11y", function (options) {
+  var self = this;
+  var KEY_RETURN = 13;
+
   if (typeof self.accessibility === "undefined") {
     self.accessibility = {};
   }
 
   self.accessibility.helpers = {
-    randomId: function(len) {
-      let str = "",
+    randomId: function (len) {
+      var str = "",
         strLength = len || 10,
         base = "abcdefghijklmnopqrstuvwxyz0123456789",
         baseLength = base.length;
 
-      for (let i = 0; i < strLength; i++) {
+      for (var i = 0; i < strLength; i++) {
         str += base[Math.floor(baseLength * Math.random())];
       }
 
@@ -21,14 +24,14 @@ Selectize.define("selectize-plugin-a11y", function(options) {
 
   self.accessibility.liveRegion = {
     $region: "",
-    speak: function(msg) {
-      let $msg = $("<div>" + msg + "</div>");
+    speak: function (msg) {
+      var $msg = $("<div>" + msg + "</div>");
       this.$region.html($msg);
     },
-    domListener: function() {
-      let observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          let $target = $(mutation.target);
+    domListener: function () {
+      var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          var $target = $(mutation.target);
           if ($target.hasClass("items")) {
             if ($target.hasClass("dropdown-active")) {
               // open
@@ -41,7 +44,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
           } else {
             // option change
             if ($target.hasClass("active")) {
-              if (!!$target.attr("data-value")) {
+              if (!!$target.attr("data-value")) { // eslint-disable-line no-extra-boolean-cast
                 self.$control_input.attr(
                   "aria-activedescendant",
                   $target.attr("id")
@@ -66,7 +69,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
         attributeFilter: ["value"]
       });
     },
-    setAttributes: function() {
+    setAttributes: function () {
       this.$region.attr({
         "aria-live": "assertive",
         role: "log",
@@ -74,7 +77,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
         "aria-atomic": "true"
       });
     },
-    setStyles: function() {
+    setStyles: function () {
       this.$region.css({
         position: "absolute",
         width: "1px",
@@ -84,7 +87,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
         overflow: "hidden"
       });
     },
-    init: function() {
+    init: function () {
       this.$region = $("<div>");
       this.setAttributes();
       this.setStyles();
@@ -93,14 +96,14 @@ Selectize.define("selectize-plugin-a11y", function(options) {
     }
   };
 
-  this.setup = (function() {
-    let original = self.setup;
-    return function() {
+  this.setup = (function () {
+    var original = self.setup;
+    return function () {
       original.apply(this, arguments);
-      let inputId = self.accessibility.helpers.randomId(),
+      var inputId = self.accessibility.helpers.randomId(),
         listboxId = self.accessibility.helpers.randomId();
 
-      self.$control.on("keydown", function(e) {
+      self.$control.on("keydown", function (e) {
         if (e.keyCode === KEY_RETURN) {
           $(this).click();
         }
