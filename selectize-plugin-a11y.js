@@ -1,3 +1,4 @@
+/* global Selectize */
 Selectize.define("selectize-plugin-a11y", function(options) {
   var self = this;
   var KEY_RETURN = 13;
