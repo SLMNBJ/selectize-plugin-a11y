@@ -41,7 +41,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
           } else {
             // option change
             if ($target.hasClass("active")) {
-              if (!!$target.attr("data-value")) {
+              if (!$target.attr("data-value")) {
                 self.$control_input.attr(
                   "aria-activedescendant",
                   $target.attr("id")
