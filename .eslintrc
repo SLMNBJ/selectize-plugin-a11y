@@ -169,7 +169,7 @@
 		"global-require": "off",
 		"handle-callback-err": "off",
 		"id-length": "off",
-		"indent": ["error", 4],
+		"indent": ["error", 2],
 		"init-declarations": "off",
 		"jsx-quotes": "off",
 		"key-spacing": "warn",
