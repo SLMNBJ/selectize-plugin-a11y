@@ -1,5 +1,5 @@
 /* global Selectize */
-Selectize.define("selectize-plugin-a11y", function(options) {
+Selectize.define("selectize-plugin-a11y", function (options) {
   var self = this;
   var KEY_RETURN = 13;
 
@@ -8,7 +8,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
   }
 
   self.accessibility.helpers = {
-    randomId: function(len) {
+    randomId: function (len) {
       var str = "",
         strLength = len || 10,
         base = "abcdefghijklmnopqrstuvwxyz0123456789",
@@ -24,13 +24,13 @@ Selectize.define("selectize-plugin-a11y", function(options) {
 
   self.accessibility.liveRegion = {
     $region: "",
-    speak: function(msg) {
+    speak: function (msg) {
       var $msg = $("<div>" + msg + "</div>");
       this.$region.html($msg);
     },
-    domListener: function() {
-      var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
+    domListener: function () {
+      var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
           var $target = $(mutation.target);
           if ($target.hasClass("items")) {
             if ($target.hasClass("dropdown-active")) {
@@ -69,7 +69,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
         attributeFilter: ["value"]
       });
     },
-    setAttributes: function() {
+    setAttributes: function () {
       this.$region.attr({
         "aria-live": "assertive",
         role: "log",
@@ -77,7 +77,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
         "aria-atomic": "true"
       });
     },
-    setStyles: function() {
+    setStyles: function () {
       this.$region.css({
         position: "absolute",
         width: "1px",
@@ -87,7 +87,7 @@ Selectize.define("selectize-plugin-a11y", function(options) {
         overflow: "hidden"
       });
     },
-    init: function() {
+    init: function () {
       this.$region = $("<div>");
       this.setAttributes();
       this.setStyles();
@@ -96,14 +96,14 @@ Selectize.define("selectize-plugin-a11y", function(options) {
     }
   };
 
-  this.setup = (function() {
+  this.setup = (function () {
     var original = self.setup;
-    return function() {
+    return function () {
       original.apply(this, arguments);
       var inputId = self.accessibility.helpers.randomId(),
         listboxId = self.accessibility.helpers.randomId();
 
-      self.$control.on("keydown", function(e) {
+      self.$control.on("keydown", function (e) {
         if (e.keyCode === KEY_RETURN) {
           $(this).click();
         }
