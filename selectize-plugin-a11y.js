@@ -1,17 +1,17 @@
 Selectize.define("selectize-plugin-a11y", function(options) {
-  let self = this;
+  var self = this;
   if (typeof self.accessibility === "undefined") {
     self.accessibility = {};
   }
 
   self.accessibility.helpers = {
     randomId: function(len) {
-      let str = "",
+      var str = "",
         strLength = len || 10,
         base = "abcdefghijklmnopqrstuvwxyz0123456789",
         baseLength = base.length;
 
-      for (let i = 0; i < strLength; i++) {
+      for (var i = 0; i < strLength; i++) {
         str += base[Math.floor(baseLength * Math.random())];
       }
 
@@ -22,13 +22,13 @@ Selectize.define("selectize-plugin-a11y", function(options) {
   self.accessibility.liveRegion = {
     $region: "",
     speak: function(msg) {
-      let $msg = $("<div>" + msg + "</div>");
+      var $msg = $("<div>" + msg + "</div>");
       this.$region.html($msg);
     },
     domListener: function() {
-      let observer = new MutationObserver(function(mutations) {
+      var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-          let $target = $(mutation.target);
+          var $target = $(mutation.target);
           if ($target.hasClass("items")) {
             if ($target.hasClass("dropdown-active")) {
               // open
@@ -94,10 +94,10 @@ Selectize.define("selectize-plugin-a11y", function(options) {
   };
 
   this.setup = (function() {
-    let original = self.setup;
+    var original = self.setup;
     return function() {
       original.apply(this, arguments);
-      let inputId = self.accessibility.helpers.randomId(),
+      var inputId = self.accessibility.helpers.randomId(),
         listboxId = self.accessibility.helpers.randomId();
 
       self.$control.on("keydown", function(e) {
