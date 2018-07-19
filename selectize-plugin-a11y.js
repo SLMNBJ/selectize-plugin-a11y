@@ -126,4 +126,12 @@ Selectize.define("selectize-plugin-a11y", function (options) {
       self.accessibility.liveRegion.init();
     };
   })();
+
+  this.destroy = (function () {
+    var original = self.destroy;
+    return function () {
+      self.accessibility.liveRegion.$region.remove();
+      return original.apply(this, arguments);
+    };
+  })();
 });
