@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,31 +8,89 @@
     <title>Accessibile Selectize</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.min.css">
 </head>
-<body>
-    <h1>Selectize-plugin-a11y.js</h1>
-    <p>Make Selectize.js accessibile</p>
 
-    <select name="" id="">
-        <option value="">Choose your country</option>
-        <option value="it">Italy</option>
-        <option value="fr">France</option>
-        <option value="gb">United Kingdom</option>
-    </select>
+<body>
+    <div id="wrapper">
+        <h1>Selectize.js Accessibility Demo</h1>
+        <div class="demo">
+            <h2>Events</h2>
+            <p>Check out the console for more details about each event.</p>
+            <div class="control-group">
+                <label for="select-state">States:</label>
+                <select id="select-state" name="state[]" class="demo-default" style="width:50%">
+                    <option value="">Select a state...</option>
+                    <option value="AL">Alabama</option>
+                    <option value="AK">Alaska</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="AR">Arkansas</option>
+                    <option value="CA">California</option>
+                    <option value="CO">Colorado</option>
+                    <option value="CT">Connecticut</option>
+                    <option value="DE">Delaware</option>
+                    <option value="DC">District of Columbia</option>
+                    <option value="FL">Florida</option>
+                    <option value="GA">Georgia</option>
+                    <option value="HI">Hawaii</option>
+                    <option value="ID">Idaho</option>
+                    <option value="IL">Illinois</option>
+                    <option value="IN">Indiana</option>
+                    <option value="IA">Iowa</option>
+                    <option value="KS">Kansas</option>
+                    <option value="KY">Kentucky</option>
+                    <option value="LA">Louisiana</option>
+                    <option value="ME">Maine</option>
+                    <option value="MD">Maryland</option>
+                    <option value="MA">Massachusetts</option>
+                    <option value="MI">Michigan</option>
+                    <option value="MN">Minnesota</option>
+                    <option value="MS">Mississippi</option>
+                    <option value="MO">Missouri</option>
+                    <option value="MT">Montana</option>
+                    <option value="NE">Nebraska</option>
+                    <option value="NV">Nevada</option>
+                    <option value="NH">New Hampshire</option>
+                    <option value="NJ">New Jersey</option>
+                    <option value="NM">New Mexico</option>
+                    <option value="NY">New York</option>
+                    <option value="NC">North Carolina</option>
+                    <option value="ND">North Dakota</option>
+                    <option value="OH">Ohio</option>
+                    <option value="OK">Oklahoma</option>
+                    <option value="OR">Oregon</option>
+                    <option value="PA">Pennsylvania</option>
+                    <option value="RI">Rhode Island</option>
+                    <option value="SC">South Carolina</option>
+                    <option value="SD">South Dakota</option>
+                    <option value="TN">Tennessee</option>
+                    <option value="TX">Texas</option>
+                    <option value="UT">Utah</option>
+                    <option value="VT">Vermont</option>
+                    <option value="VA">Virginia</option>
+                    <option value="WA">Washington</option>
+                    <option value="WV">West Virginia</option>
+                    <option value="WI">Wisconsin</option>
+                    <option value="WY">Wyoming</option>
+                </select>
+            </div>
+            <h3>Event Log</h3>
+            <pre id="log"></pre>
+        </div>
+    </div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.js"></script>
     <script src="../selectize-plugin-a11y.js"></script>
     <script>
-        $('select').selectize({
-            plugins: ['selectize-plugin-a11y'],
-            render: {
-                option: function($item, escape) {
-                    // Every option must have a unique id
-                    return `<div class="option" role="option" id="${$item.text.replace(' ', '')}">${$item.text}</div>`
+        $('#select-state').selectize({
+            createOnBlur: true,
+            plugins: {
+                'selectize-plugin-a11y': {
+                    autoOpen: false,
                 }
             }
         });
     </script>
 </body>
+
 </html>

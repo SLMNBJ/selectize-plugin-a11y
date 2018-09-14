@@ -1,7 +1,11 @@
-/* global Selectize */
-Selectize.define("selectize-plugin-a11y", function (options) {
+const eventHandler = function (name) {
+  return function () {
+    $('#log').append('<div><span class="name">' + name + '</span></div>');
+  };
+};
+
+Selectize.define('selectize-plugin-a11y', function (options) {
   var self = this;
-  var KEY_RETURN = 13;
 
   if (typeof self.accessibility === "undefined") {
     self.accessibility = {};
@@ -28,47 +32,6 @@ Selectize.define("selectize-plugin-a11y", function (options) {
       var $msg = $("<div>" + msg + "</div>");
       this.$region.html($msg);
     },
-    domListener: function () {
-      var observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-          var $target = $(mutation.target);
-          if ($target.hasClass("items")) {
-            if ($target.hasClass("dropdown-active")) {
-              // open
-              self.$control_input.attr("aria-expanded", "true");
-            } else {
-              // close
-              self.$control_input.attr("aria-expanded", "false");
-              self.$control_input.removeAttr("aria-activedescendant");
-            }
-          } else {
-            // option change
-            if ($target.hasClass("active")) {
-              if (!!$target.attr("data-value")) { // eslint-disable-line no-extra-boolean-cast
-                self.$control_input.attr(
-                  "aria-activedescendant",
-                  $target.attr("id")
-                );
-                self.accessibility.liveRegion.speak($target.text(), 500);
-              }
-            }
-          }
-        });
-      });
-      observer.observe(self.$dropdown[0], {
-        attributeFilter: ["class"],
-        subtree: true,
-        attributeOldValue: true
-      });
-
-      observer.observe(self.$control[0], {
-        attributeFilter: ["class"]
-      });
-
-      observer.observe(self.$control_input[0], {
-        attributeFilter: ["value"]
-      });
-    },
     setAttributes: function () {
       this.$region.attr({
         "aria-live": "assertive",
@@ -76,6 +39,11 @@ Selectize.define("selectize-plugin-a11y", function (options) {
         "aria-relevant": "additions",
         "aria-atomic": "true"
       });
+      self.$dropdown.attr({
+        'aria-hidden': true,
+        'tabindex': '-1',
+        inert: true
+      })
     },
     setStyles: function () {
       this.$region.css({
@@ -92,22 +60,91 @@ Selectize.define("selectize-plugin-a11y", function (options) {
       this.setAttributes();
       this.setStyles();
       $("body").append(this.$region);
-      this.domListener();
     }
   };
+
+  self.onNavigation = function (currentValue) {
+    self.accessibility.liveRegion.speak(currentValue);
+  };
+
+  self.open = (function (original) {
+    return function () {
+      original.apply(this, arguments);
+      self.$control_input.attr("aria-expanded", "true");
+
+    };
+  })(self.open);
+
+  self.close = (function (original) {
+    return function () {
+      original.apply(this, arguments);
+      self.$control_input.attr("aria-expanded", "false");
+      self.$control_input.removeAttr("aria-activedescendant");
+    };
+  })(self.close);
+
+  self.onKeyDown = (function (original) {
+    return function (e) {
+      original.apply(this, arguments);
+      if (e.keyCode !== 13 && e.keyCode !== 9 && e.keyCode !== 16) {
+        self.trigger('navigation', self.$activeOption.text())
+        self.$control_input.attr({
+          "aria-activedescendant": self.$activeOption.text()
+        });
+      }
+    };
+  })(self.onKeyDown);
+
+
+  if (self.settings['onNavigation']) {
+    var handler = self.settings['onNavigation'];
+    self.on('navigation', (currentValue, e) => {
+      handler(self, currentValue);
+      self.onNavigation(currentValue, e);
+    });
+
+    self.on('item_add', (selectedValue, $selectedItem) => {
+      self.accessibility.liveRegion.speak(`${$selectedItem.text()} ${options.labels.selected}`);
+    });
+
+    self.on('item_remove', (selectedValue, $selectedItem) => {
+      self.accessibility.liveRegion.speak(`${$selectedItem.text()} ${options.labels.removed}`);
+    });
+
+    self.on('focus', () => {
+      var msg = `${self.items.length} ${options.labels.selectedOnfocus}: ${self.items.map(item => self.options[item].text).join(' ')}`
+      self.accessibility.liveRegion.speak(msg);
+
+    });
+
+  }
+
+  let customOpen = function () {
+
+    if (options.customOpen) {
+      let customOpenKeys = options.customOpenKeys,
+        customCloseKeys = options.customCloseKeys,
+        flag = false;
+
+      self.$control.on("keydown", function (e) {
+        if (customOpenKeys.includes(e.keyCode.toString()) && !flag) {
+          self.open();
+          flag = true;
+        } else if (customCloseKeys.includes(e.keyCode.toString()) && flag) {
+          self.close();
+          flag = false;
+        }
+      });
+    }
+  }
 
   this.setup = (function () {
     var original = self.setup;
     return function () {
       original.apply(this, arguments);
-      var inputId = self.accessibility.helpers.randomId(),
-        listboxId = self.accessibility.helpers.randomId();
+      var listboxId = self.accessibility.helpers.randomId();
 
-      self.$control.on("keydown", function (e) {
-        if (e.keyCode === KEY_RETURN) {
-          $(this).click();
-        }
-      });
+
 
       self.$control_input.attr({
         role: "combobox",
@@ -123,15 +160,42 @@ Selectize.define("selectize-plugin-a11y", function (options) {
         role: "listbox",
         id: listboxId
       });
-      self.accessibility.liveRegion.init();
-    };
-  })();
 
-  this.destroy = (function () {
-    var original = self.destroy;
-    return function () {
-      self.accessibility.liveRegion.$region.remove();
-      return original.apply(this, arguments);
+      customOpen();
+
+      self.accessibility.liveRegion.init();
+
+
     };
   })();
+});
+
+
+var $select = $('#select-state').selectize({
+  createOnBlur: true,
+  openOnFocus: false,
+  plugins: {
+    'selectize-plugin-a11y': {
+      autoOpen: false,
+      customOpen: true,
+      customOpenKeys: ['13', '5', '40'],
+      customCloseKeys: ['13'],
+      labels: {
+        selected: 'selected',
+        selectedOnfocus: 'items selected',
+        removed: 'removed'
+      }
+    },
+  },
+  onChange: eventHandler('onChange'),
+  onItemAdd: eventHandler('onItemAdd'),
+  onItemRemove: eventHandler('onItemRemove'),
+  onOptionAdd: eventHandler('onOptionAdd'),
+  onOptionRemove: eventHandler('onOptionRemove'),
+  onDropdownOpen: eventHandler('onDropdownOpen'),
+  onDropdownClose: eventHandler('onDropdownClose'),
+  onFocus: eventHandler('onFocus'),
+  onBlur: eventHandler('onBlur'),
+  // New custom event
+  onNavigation: eventHandler('onNavigation')
 });
