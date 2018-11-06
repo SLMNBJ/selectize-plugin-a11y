@@ -56,16 +56,19 @@ Selectize.define("selectize-plugin-a11y", function (options) {
         });
       });
       observer.observe(self.$dropdown[0], {
+        attributes: true,
         attributeFilter: ["class"],
         subtree: true,
         attributeOldValue: true
       });
 
       observer.observe(self.$control[0], {
+        attributes: true,
         attributeFilter: ["class"]
       });
 
       observer.observe(self.$control_input[0], {
+        attributes: true,
         attributeFilter: ["value"]
       });
     },
