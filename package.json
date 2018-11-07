@@ -1,6 +1,6 @@
 {
   "name": "selectize-plugin-a11y",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Make Selectize.js accessibile",
   "main": "selectize-plugin-a11y.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "voiceover"
   ],
   "author": "Salmen Bejaoui",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/SLMNBJ/selectize-plugin-a11y/issues"
   },
