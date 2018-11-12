@@ -104,10 +104,12 @@ Selectize.define('selectize-plugin-a11y', function (options) {
     });
 
     self.on('item_add', (selectedValue, $selectedItem) => {
+
       self.accessibility.liveRegion.speak(`${$selectedItem.text()} ${options.labels.selected}`);
     });
 
     self.on('item_remove', (selectedValue, $selectedItem) => {
+
       self.accessibility.liveRegion.speak(`${$selectedItem.text()} ${options.labels.removed}`);
     });
 
@@ -160,12 +162,9 @@ Selectize.define('selectize-plugin-a11y', function (options) {
         role: "listbox",
         id: listboxId
       });
-
       customOpen();
 
       self.accessibility.liveRegion.init();
-
-
     };
   })();
 });
@@ -176,7 +175,6 @@ var $select = $('#select-state').selectize({
   openOnFocus: false,
   plugins: {
     'selectize-plugin-a11y': {
-      autoOpen: false,
       customOpen: true,
       customOpenKeys: ['13', '5', '40'],
       customCloseKeys: ['13'],
@@ -185,7 +183,12 @@ var $select = $('#select-state').selectize({
         selectedOnfocus: 'items selected',
         removed: 'removed'
       }
-    },
+    }
+  },
+  render: {
+    option: (item) => {
+      return "<div class=option data-selectable data-value=" + item.value + "><input type=checkbox class=hidden />" + item.text + "</div>";
+    }
   },
   onChange: eventHandler('onChange'),
   onItemAdd: eventHandler('onItemAdd'),
