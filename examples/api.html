@@ -16,6 +16,7 @@
         <option value="it">Italy</option>
         <option value="fr">France</option>
         <option value="gb">United Kingdom</option>
+        <option value="script">&lt;script&gt;alert('hi')&lt;/script&gt;</option>
     </select>
 
 
@@ -28,7 +29,7 @@
             render: {
                 option: function($item, escape) {
                     // Every option must have a unique id
-                    return `<div class="option" role="option" id="${$item.text.replace(' ', '')}">${$item.text}</div>`
+                    return `<div class="option" role="option" id="${escape($item.text).replace(' ', '')}">${escape($item.text)}</div>`
                 }
             }
         });
