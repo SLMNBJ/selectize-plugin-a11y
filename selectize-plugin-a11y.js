@@ -25,8 +25,9 @@ Selectize.define("selectize-plugin-a11y", function (options) {
   self.accessibility.liveRegion = {
     $region: "",
     speak: function (msg) {
-      var $msg = $("<div>" + escape(msg) + "</div>");
-      this.$region.html($msg);
+      var $container = $("<div></div>");
+      $container.text(msg);
+      this.$region.html($container);
     },
     domListener: function () {
       var observer = new MutationObserver(function (mutations) {
